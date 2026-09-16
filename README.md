@@ -1,2 +1,10 @@
-# Finanzas-R-Riesgo-Operacional
-Proyecto Finanzas en R - Herramienta para la revisión y priorización de riesgos y controles de Riesgo Operacional
+Finanzas-R-Riesgo-Operacional/
+│
+├── README.md
+│
+├── Entrega 01/
+│   └── Entrega_1_Riesgos_Controles.pdf
+│
+├── Entrega 02/
+│
+└── Entrega 03/
