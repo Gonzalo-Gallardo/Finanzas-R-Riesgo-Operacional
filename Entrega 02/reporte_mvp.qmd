@@ -1,0 +1,122 @@
+---
+title: "Entrega 02 - MVP de Riesgo Operacional"
+author: "Gonzalo Gallardo"
+format:
+  html:
+    toc: true
+    code-fold: false
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# Objetivo
+
+Desarrollar un Producto Mínimo Viable (MVP) en R para apoyar la revisión y priorización de riesgos y controles de Riesgo Operacional.
+
+La herramienta permite evaluar el nivel de riesgo mediante criterios de probabilidad e impacto, revisar los controles asociados, identificar alertas y establecer una prioridad de revisión para apoyar el análisis.
+
+# Ejecución del MVP
+
+El análisis completo se encuentra implementado en el archivo `riesgo_operacional_mvp.R`.
+
+```{r}
+source("riesgo_operacional_mvp.R")
+```
+
+# Riesgos evaluados
+
+La criticidad de cada riesgo se determina a partir de su probabilidad e impacto.
+
+```{r}
+riesgos %>%
+  select(
+    id_riesgo,
+    descripcion_riesgo,
+    probabilidad,
+    impacto,
+    puntaje_riesgo,
+    nivel_riesgo
+  ) %>%
+  arrange(desc(puntaje_riesgo))
+```
+
+# Controles evaluados
+
+Para cada riesgo se revisan los controles asociados y características relevantes para el análisis.
+
+```{r}
+resultado_final %>%
+  select(
+    id_riesgo,
+    id_control,
+    tipo_control,
+    ejecucion,
+    frecuencia,
+    evidencia,
+    resultado_revision,
+    plan_accion,
+    estado_plan
+  )
+```
+
+# Priorización de revisión
+
+El MVP combina el nivel de riesgo con alertas relacionadas con los controles para generar un puntaje de prioridad.
+
+```{r}
+resultado_final %>%
+  select(
+    id_riesgo,
+    id_control,
+    nivel_riesgo,
+    alertas,
+    puntaje_prioridad,
+    prioridad
+  ) %>%
+  arrange(desc(puntaje_prioridad))
+```
+
+# Resumen de prioridades
+
+```{r}
+resultado_final %>%
+  count(prioridad)
+```
+
+# Matriz de riesgos
+
+La matriz permite visualizar la relación entre probabilidad e impacto de los riesgos analizados.
+
+```{r}
+print(matriz_riesgos)
+```
+
+# Priorización de controles
+
+El siguiente gráfico permite visualizar los controles que presentan una mayor prioridad de revisión.
+
+```{r}
+print(grafico_prioridad)
+```
+
+# Validación riesgo-control
+
+Se verifica si existen riesgos que no cuenten con controles asociados.
+
+```{r}
+riesgos %>%
+  anti_join(
+    controles %>% distinct(id_riesgo),
+    by = "id_riesgo"
+  )
+```
+
+# Conclusión
+
+El MVP permite sistematizar la revisión inicial de riesgos y controles de Riesgo Operacional.
+
+La herramienta calcula la criticidad de los riesgos mediante probabilidad e impacto, analiza características y resultados de los controles, genera alertas y establece una priorización de revisión.
+
+De esta forma, el MVP permite concentrar el análisis en aquellos casos que requieren mayor atención y entrega información trazable para apoyar la toma de decisiones del analista de Riesgo Operacional.
