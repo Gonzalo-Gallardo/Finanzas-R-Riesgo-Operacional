@@ -44,7 +44,7 @@ Estas ponderaciones constituyen una regla transparente del MVP y pueden calibrar
 ## Archivos principales
 
 ```text
-Entrega02/
+Entrega 02/
 ├── riesgo_operacional_mvp.R   # Código principal y autocontenido del MVP
 ├── reporte_mvp.qmd            # Reporte reproducible desarrollado en Quarto
 ├── reporte_mvp.html           # Reporte final HTML autocontenido
