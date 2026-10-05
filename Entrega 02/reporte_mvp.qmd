@@ -1,10 +1,12 @@
 ---
 title: "Entrega 02 - MVP de Riesgo Operacional"
 author: "Gonzalo Gallardo"
+lang: es
 format:
   html:
     toc: true
     code-fold: false
+    embed-resources: true
 execute:
   echo: true
   warning: false
