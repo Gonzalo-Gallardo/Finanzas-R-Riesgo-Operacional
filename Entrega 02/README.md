@@ -45,15 +45,12 @@ Estas ponderaciones constituyen una regla transparente del MVP y pueden calibrar
 
 ```text
 Entrega02/
-├── riesgo_operacional_mvp.R   # Código principal y autocontenido
-├── reporte_mvp.qmd            # Reporte reproducible en Quarto
-├── reporte_mvp.html           # Reporte renderizado
-├── README.md                  # Descripción y guía de ejecución
-├── GUIA_CARGA_GITHUB.md       # Guía breve para publicar la entrega
-├── bootstrap_renv.R           # Ayuda para preparar dependencias
-├── renv.lock                  # Versiones registradas de paquetes
-├── .Rprofile
-└── renv/
+├── riesgo_operacional_mvp.R   # Código principal y autocontenido del MVP
+├── reporte_mvp.qmd            # Reporte reproducible desarrollado en Quarto
+├── reporte_mvp.html           # Reporte final HTML autocontenido
+├── README.md                  # Descripción, metodología y guía de ejecución
+├── renv.lock                  # Versiones registradas de los paquetes
+└── reporte_mvp_files/         # Recursos generados durante el renderizado
 ```
 
 ## Cómo ejecutar el MVP
@@ -70,8 +67,8 @@ Al finalizar, la consola debe mostrar `MVP EJECUTADO CORRECTAMENTE` y el resumen
 
 Con las dependencias instaladas, el reporte puede generarse desde Positron/Quarto o mediante:
 
-```r
-quarto::quarto_render("reporte_mvp.qmd")
+```bash
+quarto render reporte_mvp.qmd
 ```
 
 El archivo `reporte_mvp.html` incluido en la entrega contiene una versión renderizada del reporte.
@@ -84,7 +81,7 @@ En otro equipo, abrir el proyecto y ejecutar:
 renv::restore()
 ```
 
-Esto restaura las versiones registradas en `renv.lock`. Si el paquete de R `quarto` no estuviera disponible y se desea renderizar desde R, puede instalarse con `renv::install("quarto")`.
+Esto restaura las versiones de los paquetes de R registradas en `renv.lock`. Para generar el reporte se requiere además una instalación de Quarto disponible en el sistema.
 
 ## Validaciones incorporadas
 
