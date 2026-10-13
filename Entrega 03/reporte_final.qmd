@@ -1,0 +1,238 @@
+---
+title: "Entrega 03 | Proyecto final de Riesgo Operacional"
+subtitle: "Revisión y priorización de riesgos y controles mediante R"
+author: "Gonzalo Gallardo"
+lang: es
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    embed-resources: true
+    code-fold: true
+    code-summary: "Ver código R"
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: preparacion
+#| include: false
+# El documento se ejecuta desde la carpeta que contiene este archivo:
+stopifnot(file.exists("../Entrega 02/riesgo_operacional_mvp.R"))
+stopifnot(file.exists("codigo/monitoreo_mvp.R"))
+# Se preserva el MVP original. Capturamos sus mensajes de consola.
+invisible(capture.output(source("../Entrega 02/riesgo_operacional_mvp.R", local = TRUE)))
+invisible(capture.output(source("codigo/monitoreo_mvp.R", local = TRUE)))
+stopifnot(nrow(riesgos) == 10L, nrow(controles) == 12L)
+stopifnot(nrow(resultado_final) == nrow(controles))
+```
+
+# Resumen ejecutivo
+
+Este proyecto desarrolla una herramienta de apoyo para revisar y priorizar riesgos operacionales y sus controles asociados. El MVP, implementado en R, valida atributos, relaciona riesgos con controles, calcula la criticidad mediante probabilidad e impacto y aplica reglas transparentes de priorización. La decisión final corresponde al analista y no al algoritmo. El conjunto incorporado al código es de demostración; la herramienta no está desplegada en producción.
+
+En la ejecución actual se analizaron **`r nrow(riesgos)` riesgos** y **`r nrow(controles)` controles**, con **`r sum(resultado_final$prioridad == "Alta")` controles de prioridad alta**, **`r sum(resultado_final$prioridad == "Media")` media** y **`r sum(resultado_final$prioridad == "Baja")` baja**.
+
+# Descripción de la solución
+
+**Problema.** La revisión manual de los atributos de riesgos y controles puede dificultar la identificación oportuna de casos con debilidades de evidencia, resultados deficientes o planes de acción vencidos.
+
+**Solución.** Automatizar validaciones de integridad, clasificación de riesgos, asociación riesgo-control, generación de alertas y priorización explicable. El usuario principal es el analista de Riesgo Operacional; los responsables de procesos pueden usar las observaciones para dar seguimiento a mejoras.
+
+**Periodicidad.** Ejecución al actualizar el universo de riesgos y controles; revisión de tendencias mensualmente como propuesta de operación futura.
+
+**Alcance.** Análisis y visualización del universo estructurado, reglas de negocio y reportes reproducibles. **Exclusiones:** integración directa con sistemas bancarios, decisiones automáticas, predicción de pérdidas y operación productiva.
+
+# Planificación del trabajo
+
+La planificación se estructuró en tres entregas. La primera definió problema, alcance y etapas; la segunda implementó el MVP; la tercera integra documentación, propuesta de despliegue y monitoreo.
+
+| Etapa | Actividad | Evidencia |
+|:--|:--|:--|
+| Definición | Problema, objetivos, alcance y planificación | Entrega 01 |
+| Construcción | Datos, validaciones, reglas y visualizaciones | Entrega 02 |
+| Evaluación | Pruebas de integridad y resultados | Entregas 02 y 03 |
+| Documentación | Flujo, diccionario y reglas | Entrega 03 |
+| Despliegue | Arquitectura y controles propuestos | Entrega 03 |
+| Monitoreo | Indicadores, alertas y reportes | Entrega 03 |
+
+Esta secuencia es una planificación de proyecto; no implica un despliegue productivo.
+
+## Cronograma de referencia y dependencias
+
+El siguiente cronograma de **seis semanas es una propuesta ilustrativa**, no un registro de fechas efectivamente ejecutadas. Permite identificar dependencias y puntos de control para una eventual repetición del proyecto.
+
+```{mermaid}
+gantt
+    title Planificación referencial del proyecto (6 semanas)
+    dateFormat YYYY-MM-DD
+    axisFormat Semana %W
+    section Diseño
+    Definición del problema y alcance       :a1, 2026-09-07, 7d
+    section Desarrollo
+    Estructura de datos y validaciones       :a2, after a1, 7d
+    Reglas de priorización y MVP             :a3, after a2, 7d
+    section Aseguramiento
+    Pruebas y revisión de resultados         :a4, after a3, 7d
+    section Cierre
+    Documentación y propuesta de despliegue  :a5, after a4, 7d
+    Monitoreo, revisión y entrega            :a6, after a5, 7d
+```
+
+**Hitos de aceptación propuestos:** definición de alcance aprobada; MVP ejecutable; pruebas de integridad satisfactorias; documentación revisada; informe final reproducible. Una eventual implementación requiere la aprobación del propietario del proceso y del área tecnológica.
+
+# Producto mínimo viable (MVP)
+
+## Riesgos y controles
+
+La criticidad de cada riesgo corresponde a **probabilidad × impacto**, con ambas variables en escala de 1 a 5. Se clasifica como **Crítico** desde 20 puntos, **Alto** desde 10, **Medio** desde 5 y **Bajo** en los demás casos.
+
+```{r}
+knitr::kable(riesgos[, c("id_riesgo", "descripcion_riesgo", "probabilidad", "impacto", "puntaje_riesgo", "nivel_riesgo")], caption = "Riesgos evaluados")
+```
+
+## Reglas de priorización
+
+La prioridad se obtiene sumando al puntaje de riesgo los siguientes ajustes:
+
+| Condición | Puntos adicionales |
+|:--|--:|
+| Riesgo crítico | 3 |
+| Control sin evidencia | 3 |
+| Revisión no satisfactoria | 2 |
+| Resultado deficiente | 3 |
+| Plan de acción vencido | 3 |
+| Ejecución manual | 1 |
+
+La prioridad es **Alta** con 25 puntos o más, **Media** desde 15 y **Baja** bajo 15. Los pesos son criterios de negocio exploratorios, no parámetros estadísticamente calibrados. La ejecución manual suma un punto de atención, pero no demuestra por sí sola ineficacia.
+
+```{r}
+knitr::kable(resultado_final[, c("id_riesgo", "id_control", "nivel_riesgo", "evidencia", "resultado_revision", "estado_plan", "puntaje_prioridad", "prioridad")], caption = "Controles priorizados")
+```
+
+## Visualizaciones
+
+```{r}
+#| fig-width: 8
+#| fig-height: 5
+print(matriz_riesgos)
+```
+
+```{r}
+#| fig-width: 8
+#| fig-height: 5
+print(grafico_prioridad)
+```
+
+## Validaciones
+
+El código verifica IDs únicos, rangos de probabilidad e impacto, coherencia del cálculo, existencia de riesgos referenciados, consistencia de planes de acción, controles deficientes con plan, y validez de las categorías de prioridad. El conjunto actual no contiene riesgos sin control; ese escenario debe incorporarse en pruebas adicionales antes de producción.
+
+# Documentación técnica
+
+## Flujo de procesamiento
+
+```{mermaid}
+flowchart TD
+    A[Datos de riesgos y controles] --> B[Validaciones de integridad]
+    B --> C{¿Datos válidos?}
+    C -- No --> X[Detener ejecución y registrar incidencia]
+    X --> Y[Corregir fuente y volver a validar]
+    Y --> B
+    C -- Sí --> D[Asociar cada control a su riesgo]
+    D --> E[Calcular criticidad: probabilidad por impacto]
+    E --> F[Evaluar alertas y puntaje]
+    F --> G[Prioridad alta, media o baja]
+    G --> H[Generar reportes y matriz]
+    H --> I[Revisión y decisión del analista]
+    I --> J[Registrar seguimiento de hallazgos]
+```
+
+## Variables principales
+
+| Variable | Descripción |
+|:--|:--|
+| `id_riesgo`, `id_control` | Identificadores de riesgos y controles |
+| `probabilidad`, `impacto` | Escalas enteras de 1 a 5 |
+| `puntaje_riesgo`, `nivel_riesgo` | Criticidad calculada |
+| `tipo_control`, `ejecucion`, `frecuencia` | Características del control |
+| `evidencia`, `resultado_revision` | Evidencia y evaluación |
+| `plan_accion`, `estado_plan` | Seguimiento correctivo |
+| `alertas`, `puntaje_prioridad`, `prioridad` | Salidas del motor de reglas |
+
+Los documentos complementarios están en `documentacion/`: `DICCIONARIO_DATOS.md`, `DIAGRAMA_FLUJO.md`, `PLAN_PRUEBAS.md`, `RESULTADOS_ESPERADOS.md` y `PROYECTO_FINAL.md`.
+
+## Limpieza, transformación y trazabilidad
+
+La versión actual construye las bases en el script, verifica valores faltantes, escalas y referencias, y genera variables derivadas mediante reglas explícitas. Todavía no implementa una ingestión general desde sistemas externos, ni una estrategia de imputación; esas funciones son requisitos previos a una operación productiva. El repositorio permite versionar scripts, documentación y dependencias mediante `renv.lock`.
+
+# Propuesta de despliegue
+
+Se propone una ejecución programada en una estación o servidor autorizado. La arquitectura futura contempla: fuente de datos aprobada → controles de acceso → validación de esquema y calidad → ejecución de R con dependencias fijadas → generación de CSV y HTML → revisión humana → registro de acciones y bitácora.
+
+**Controles requeridos:** propietario de datos, permisos mínimos, respaldo y reversión de versiones, registro de ejecuciones, validación previa de cambios, gestión de errores y prohibición de guardar credenciales en el repositorio. El estado actual es un **prototipo local**, no una herramienta productiva.
+
+## Procedimiento operativo propuesto
+
+| Componente | Responsable propuesto | Frecuencia o criterio | Evidencia esperada |
+|:--|:--|:--|:--|
+| Autorización de fuentes y permisos | Dueño del proceso y área de datos | Antes del primer uso y ante cambios | Aprobación y matriz de accesos |
+| Validación de archivos y esquema | Operador técnico | En cada ejecución | Registro de validaciones y errores |
+| Ejecución del script versionado | Operador técnico | Tras actualización del universo | Bitácora con fecha, versión y estado |
+| Revisión de prioridades y alertas | Analista de Riesgo Operacional | En cada actualización | Reporte revisado y observaciones |
+| Seguimiento de planes de acción | Responsable del control | Según vencimiento comprometido | Estado, evidencia y fecha de cierre |
+| Revisión de reglas y umbrales | Responsable metodológico | Trimestral o ante cambios relevantes | Acta de revisión y control de versiones |
+
+**Gestión de fallos.** Si se detectan identificadores duplicados, referencias inválidas, columnas ausentes o una ejecución incompleta, se debe detener la publicación del reporte, registrar la incidencia, notificar al responsable y conservar la última salida validada con su fecha de corte claramente identificada. No debe presentarse una salida antigua como resultado actualizado.
+
+**Reversión.** Ante una falla posterior a un cambio de código o reglas, restaurar la última versión aprobada desde el repositorio, restablecer las dependencias fijadas, repetir las pruebas automáticas y publicar únicamente después de la validación del responsable. Esta es una **propuesta de procedimiento**, no una funcionalidad ya implementada.
+
+# Monitoreo del MVP
+
+## Indicadores observados
+
+```{r}
+knitr::kable(metricas, digits = 2, caption = "Indicadores calculados por el módulo de monitoreo")
+```
+
+```{r}
+knitr::kable(prioridades, caption = "Distribución de prioridades")
+```
+
+## Umbrales y respuesta propuestos
+
+| Evento | Tratamiento sugerido |
+|:--|:--|
+| ID duplicado o estructura inválida | Detener procesamiento y corregir fuente |
+| Control deficiente sin plan | Alerta y revisión de consistencia |
+| Riesgo sin control asociado | Escalar para revisión del analista |
+| Control sin evidencia | Solicitar respaldo y documentar seguimiento |
+| Cambio de más de 20 % en controles de prioridad alta | Investigar variación respecto del período anterior |
+
+Los umbrales son propuestas que deben validarse antes de su aplicación. No se dispone aún de series históricas suficientes para evaluar estabilidad temporal. Se recomienda conservar resultados por fecha, documentar responsables y registrar incidencias y cambios de reglas.
+
+## Matriz de seguimiento propuesta
+
+Los indicadores de la tabla siguiente **no constituyen alertas productivas implementadas**. Sus fórmulas permiten definir una futura rutina de control; los umbrales deberán ser aprobados por el área responsable.
+
+| Indicador | Fórmula o definición | Umbral de atención propuesto | Frecuencia | Responsable y respuesta |
+|:--|:--|:--|:--|:--|
+| Riesgos sin control | Riesgos sin controles asociados / total de riesgos × 100 | Mayor que 0 % | Cada ejecución | Analista: validar asociación y escalar |
+| Controles sin evidencia | Controles sin respaldo / total de controles × 100 | Mayor que 10 % | Cada ejecución | Dueño del control: solicitar respaldo |
+| Controles deficientes | Número de controles con resultado deficiente | Cualquier caso | Cada ejecución | Analista: revisar causa y tratamiento |
+| Planes vencidos | Número de planes con estado vencido | Cualquier caso | Semanal, si existe fuente actualizada | Responsable del plan: regularizar y escalar |
+| Prioridad alta | Controles de prioridad alta / total de controles × 100 | Variación relativa superior a 20 % respecto al corte anterior | Mensual, con historial | Analista: investigar causas del cambio |
+| Calidad de identificadores | Número de IDs duplicados o referencias inválidas | Mayor que cero | Cada ejecución | Operador técnico: detener publicación |
+
+**Interpretación del indicador de prioridad alta:** la variación se calcula solo cuando existen dos períodos comparables y el valor base es distinto de cero; de lo contrario, se informa como *no calculable* y se analiza el cambio absoluto. Esto evita divisiones por cero y conclusiones engañosas.
+
+**Límites de evaluación:** el prototipo demuestra generación de indicadores y reglas; no prueba aún puntualidad de ejecución, disponibilidad, calidad de fuentes externas ni reducción de pérdidas operacionales. Estas dimensiones requerirían datos y seguimiento en un piloto autorizado.
+
+# Conclusiones y próximos pasos
+
+El MVP permite priorizar de forma consistente un conjunto de riesgos y controles, con reglas interpretables y pruebas de integridad. La Entrega 03 añade documentación y un diseño de operación y monitoreo. Como mejoras futuras se proponen la ingestión controlada de fuentes externas, pruebas con casos extremos, validación de umbrales con especialistas, comparación histórica de indicadores y evaluación de desempeño operativo.
+
+**Reproducibilidad:** desde la carpeta principal se puede ejecutar `source("Entrega 03/codigo/pruebas_entrega03.R")`. Para generar este documento, abrir `Entrega 03/reporte_final.qmd` en Positron y seleccionar **Preview**, o ejecutar `quarto render "Entrega 03/reporte_final.qmd" --to html` en una terminal ubicada en la carpeta principal.
