@@ -11,6 +11,12 @@ La Entrega 01 definió alcance y secuencia: definición del problema → estruct
 ## 3. MVP desarrollado
 El script `Entrega 02/riesgo_operacional_mvp.R` contiene 10 riesgos y 12 controles de demostración. Cada riesgo se clasifica por `probabilidad × impacto`: crítico desde 20, alto desde 10, medio desde 5, bajo en los demás casos. La puntuación de prioridad suma al puntaje de riesgo: riesgo crítico +3, sin evidencia +3, revisión no satisfactoria +2, resultado deficiente +3, plan vencido +3, control manual +1. Alta desde 25, Media desde 15, Baja en los demás casos. Son reglas de negocio propuestas, no coeficientes calibrados ni predicciones. El MVP comprueba unicidad de IDs, escalas, relaciones y consistencia de planes. En la ejecución revisada: 10 riesgos, 12 controles; prioridades Alta 2, Media 6, Baja 4. Produce matriz de riesgos, ranking y reporte Quarto HTML.
 
+### Justificación de las reglas de prioridad
+La priorización combina la exposición inherente del riesgo (probabilidad × impacto) con señales observadas en los controles. Los ajustes de +3 se reservan para condiciones de atención elevada dentro de este prototipo (criticidad, falta de evidencia, deficiencia y vencimiento); +2 refleja revisiones no satisfactorias, y +1 identifica controles manuales para una revisión adicional sin presumir que sean ineficaces. Estos valores y los cortes de 15 y 25 son criterios exploratorios, sujetos a validación por especialistas, análisis de sensibilidad y aprobación antes de su utilización operativa. La **prioridad del control** no equivale al **nivel de riesgo**.
+
+### Interpretación de resultados para la gestión
+En los resultados de referencia, **C08** y **C02** requieren prioridad alta. Para C08 corresponde solicitar evidencia, revisar el resultado deficiente y confirmar el estado del plan vencido; para C02, contrastar las observaciones con el procedimiento vigente y verificar los avances del plan en proceso. La matriz sirve para organizar solicitudes de respaldo, orientar la selección de muestras conforme al universo y frecuencia de cada control, registrar hallazgos y hacer seguimiento. Las decisiones y conclusiones finales corresponden al analista. El MVP no acredita por sí solo reducciones de pérdidas ni mejoras cuantificadas de eficiencia.
+
 ## 4. Documentación
 **Arquitectura lógica:** datos de riesgos/controles → validaciones → asociación → cálculo de criticidad → alertas → puntuación → revisión priorizada → reporte → seguimiento. Véase `DIAGRAMA_FLUJO.md` y `DICCIONARIO_DATOS.md`.
 
