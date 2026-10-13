@@ -109,9 +109,22 @@ La prioridad se obtiene sumando al puntaje de riesgo los siguientes ajustes:
 
 La prioridad es **Alta** con 25 puntos o más, **Media** desde 15 y **Baja** bajo 15. Los pesos son criterios de negocio exploratorios, no parámetros estadísticamente calibrados. La ejecución manual suma un punto de atención, pero no demuestra por sí sola ineficacia.
 
+### Fundamentación y límites de los criterios
+
+La puntuación combina la exposición al riesgo (probabilidad por impacto) con señales de atención sobre los controles. El ajuste por riesgo crítico destaca controles asociados a exposiciones elevadas; la falta de evidencia o una revisión con observaciones justifican profundizar la revisión; un resultado deficiente y un plan vencido requieren seguimiento correctivo. La ejecución manual añade una señal de revisión, pero no constituye por sí sola una deficiencia.
+
+Los ajustes de 1, 2 y 3 puntos y los umbrales de 15 y 25 son supuestos de diseño del MVP, no estimaciones estadísticas de pérdidas ni parámetros aprobados institucionalmente. Las categorías **Alta, Media y Baja** expresan la prioridad de revisión de cada control, y deben distinguirse de la criticidad del riesgo asociado. Para un uso productivo se requeriría validar los pesos con especialistas, evaluar su sensibilidad y aprobar formalmente los umbrales.
+
+
 ```{r}
 knitr::kable(resultado_final[, c("id_riesgo", "id_control", "nivel_riesgo", "evidencia", "resultado_revision", "estado_plan", "puntaje_prioridad", "prioridad")], caption = "Controles priorizados")
 ```
+
+## Aplicación de los resultados a la revisión operacional
+
+Los controles **C08** y **C02** se clasifican con prioridad alta en la ejecución de referencia. En **C08**, la revisión deficiente, la falta de evidencia y el plan vencido sugieren solicitar respaldo de la ejecución, verificar el estado del compromiso y escalar la observación al responsable. En **C02**, la revisión con observaciones y el plan en proceso justifican contrastar la evidencia disponible con el procedimiento vigente y comprobar el avance de las acciones comprometidas.
+
+En un ciclo de revisión, el analista puede utilizar la matriz para ordenar solicitudes de evidencia, definir muestras de acuerdo con la frecuencia y el universo de ejecución, registrar hallazgos y efectuar seguimiento de los planes. La selección de muestras, la validación de evidencias y las decisiones de escalamiento siguen siendo actividades sujetas al juicio profesional; el MVP no automatiza esas decisiones ni demuestra una reducción cuantificada de pérdidas.
 
 ## Visualizaciones
 
