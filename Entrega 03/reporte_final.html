@@ -5287,9 +5287,13 @@ z-index: 1000;
   <li><a href="#producto-mínimo-viable-mvp" id="toc-producto-mínimo-viable-mvp" class="nav-link" data-scroll-target="#producto-mínimo-viable-mvp"><span class="header-section-number">4</span> Producto mínimo viable (MVP)</a>
   <ul class="collapse">
   <li><a href="#riesgos-y-controles" id="toc-riesgos-y-controles" class="nav-link" data-scroll-target="#riesgos-y-controles"><span class="header-section-number">4.1</span> Riesgos y controles</a></li>
-  <li><a href="#reglas-de-priorización" id="toc-reglas-de-priorización" class="nav-link" data-scroll-target="#reglas-de-priorización"><span class="header-section-number">4.2</span> Reglas de priorización</a></li>
-  <li><a href="#visualizaciones" id="toc-visualizaciones" class="nav-link" data-scroll-target="#visualizaciones"><span class="header-section-number">4.3</span> Visualizaciones</a></li>
-  <li><a href="#validaciones" id="toc-validaciones" class="nav-link" data-scroll-target="#validaciones"><span class="header-section-number">4.4</span> Validaciones</a></li>
+  <li><a href="#reglas-de-priorización" id="toc-reglas-de-priorización" class="nav-link" data-scroll-target="#reglas-de-priorización"><span class="header-section-number">4.2</span> Reglas de priorización</a>
+  <ul class="collapse">
+  <li><a href="#fundamentación-y-límites-de-los-criterios" id="toc-fundamentación-y-límites-de-los-criterios" class="nav-link" data-scroll-target="#fundamentación-y-límites-de-los-criterios"><span class="header-section-number">4.2.1</span> Fundamentación y límites de los criterios</a></li>
+  </ul></li>
+  <li><a href="#aplicación-de-los-resultados-a-la-revisión-operacional" id="toc-aplicación-de-los-resultados-a-la-revisión-operacional" class="nav-link" data-scroll-target="#aplicación-de-los-resultados-a-la-revisión-operacional"><span class="header-section-number">4.3</span> Aplicación de los resultados a la revisión operacional</a></li>
+  <li><a href="#visualizaciones" id="toc-visualizaciones" class="nav-link" data-scroll-target="#visualizaciones"><span class="header-section-number">4.4</span> Visualizaciones</a></li>
+  <li><a href="#validaciones" id="toc-validaciones" class="nav-link" data-scroll-target="#validaciones"><span class="header-section-number">4.5</span> Validaciones</a></li>
   </ul></li>
   <li><a href="#documentación-técnica" id="toc-documentación-técnica" class="nav-link" data-scroll-target="#documentación-técnica"><span class="header-section-number">5</span> Documentación técnica</a>
   <ul class="collapse">
@@ -5583,6 +5587,10 @@ z-index: 1000;
 </tbody>
 </table>
 <p>La prioridad es <strong>Alta</strong> con 25 puntos o más, <strong>Media</strong> desde 15 y <strong>Baja</strong> bajo 15. Los pesos son criterios de negocio exploratorios, no parámetros estadísticamente calibrados. La ejecución manual suma un punto de atención, pero no demuestra por sí sola ineficacia.</p>
+<section id="fundamentación-y-límites-de-los-criterios" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="fundamentación-y-límites-de-los-criterios"><span class="header-section-number">4.2.1</span> Fundamentación y límites de los criterios</h3>
+<p>La puntuación combina la exposición al riesgo (probabilidad por impacto) con señales de atención sobre los controles. El ajuste por riesgo crítico destaca controles asociados a exposiciones elevadas; la falta de evidencia o una revisión con observaciones justifican profundizar la revisión; un resultado deficiente y un plan vencido requieren seguimiento correctivo. La ejecución manual añade una señal de revisión, pero no constituye por sí sola una deficiencia.</p>
+<p>Los ajustes de 1, 2 y 3 puntos y los umbrales de 15 y 25 son supuestos de diseño del MVP, no estimaciones estadísticas de pérdidas ni parámetros aprobados institucionalmente. Las categorías <strong>Alta, Media y Baja</strong> expresan la prioridad de revisión de cada control, y deben distinguirse de la criticidad del riesgo asociado. Para un uso productivo se requeriría validar los pesos con especialistas, evaluar su sensibilidad y aprobar formalmente los umbrales.</p>
 <div class="cell">
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
@@ -5735,8 +5743,14 @@ z-index: 1000;
 </div>
 </div>
 </section>
-<section id="visualizaciones" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="visualizaciones"><span class="header-section-number">4.3</span> Visualizaciones</h2>
+</section>
+<section id="aplicación-de-los-resultados-a-la-revisión-operacional" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="aplicación-de-los-resultados-a-la-revisión-operacional"><span class="header-section-number">4.3</span> Aplicación de los resultados a la revisión operacional</h2>
+<p>Los controles <strong>C08</strong> y <strong>C02</strong> se clasifican con prioridad alta en la ejecución de referencia. En <strong>C08</strong>, la revisión deficiente, la falta de evidencia y el plan vencido sugieren solicitar respaldo de la ejecución, verificar el estado del compromiso y escalar la observación al responsable. En <strong>C02</strong>, la revisión con observaciones y el plan en proceso justifican contrastar la evidencia disponible con el procedimiento vigente y comprobar el avance de las acciones comprometidas.</p>
+<p>En un ciclo de revisión, el analista puede utilizar la matriz para ordenar solicitudes de evidencia, definir muestras de acuerdo con la frecuencia y el universo de ejecución, registrar hallazgos y efectuar seguimiento de los planes. La selección de muestras, la validación de evidencias y las decisiones de escalamiento siguen siendo actividades sujetas al juicio profesional; el MVP no automatiza esas decisiones ni demuestra una reducción cuantificada de pérdidas.</p>
+</section>
+<section id="visualizaciones" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="visualizaciones"><span class="header-section-number">4.4</span> Visualizaciones</h2>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -5756,8 +5770,8 @@ z-index: 1000;
 </div>
 </div>
 </section>
-<section id="validaciones" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="validaciones"><span class="header-section-number">4.4</span> Validaciones</h2>
+<section id="validaciones" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="validaciones"><span class="header-section-number">4.5</span> Validaciones</h2>
 <p>El código verifica IDs únicos, rangos de probabilidad e impacto, coherencia del cálculo, existencia de riesgos referenciados, consistencia de planes de acción, controles deficientes con plan, y validez de las categorías de prioridad. El conjunto actual no contiene riesgos sin control; ese escenario debe incorporarse en pruebas adicionales antes de producción.</p>
 </section>
 </section>
